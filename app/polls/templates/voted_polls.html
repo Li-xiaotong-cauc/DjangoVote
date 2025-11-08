@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}投票列表 - DjangoVote{% endblock %}
+
+{% block content %}
+<div class="poll-list-container">
+    <div class="poll-list-header">
+        <h1>投票列表</h1>
+        <h2>用户 {{ user.name }} 参与的投票</h2>
+    </div>
+
+    {% if voted_polls_records %}
+        <div class="poll-cards-grid">
+            {% for voted_polls_record in voted_polls_records %}
+                <div class="poll-card">
+                    <div class="poll-content">
+                        <h3 class="poll-question">{{ voted_polls_record.poll.question }}</h3>
+
+                        {% if voted_polls_record.poll.question_description %}
+                            <p class="poll-description">{{ voted_polls_record.poll.question_description }}</p>
+                        {% endif %}
+
+                        <div class="poll-meta">
+                            <span class="poll-id">发起人：{{ voted_polls_record.poll.created_by.name }}</span>
+                            <span class="poll-id">ID:&nbsp;#{{ voted_polls_record.poll.poll_id }}</span>
+                            <span class="poll-date">{{ voted_polls_record.poll.pub_date|date:"Y-m-d H:i" }}</span>
+                        </div>
+                        <a href="{% url 'polls:poll_index' voted_polls_record.poll.poll_id %}" class="poll-cta">查看详情</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>暂无投票</h3>
+            <p>您还没有发起任何投票，点击下方按钮开始创建第一个投票吧！</p>
+            <!-- 可以在这里添加创建投票的链接按钮 -->
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/poll_list.css' %}">
+{% endblock %}

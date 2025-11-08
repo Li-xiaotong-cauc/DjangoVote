@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}创建投票 - DjangoVote{% endblock %}
+
+{% block content %}
+<div class="create-poll-container">
+    <h1 class="create-poll-title">创建新投票</h1>
+    <p class="create-poll-subtitle">在DjangoVote上发表你的投票！</p>
+
+    <form id="poll-form" method="post" action="{% url 'polls:create_poll_API' %}" class="poll-form">
+        {% csrf_token %}
+
+        <!-- 投票标题 -->
+        <div class="form-group">
+            <label for="title" class="form-label">投票标题</label>
+            <input type="text" id="title" name="title" maxlength="20"
+                   value="{% if title %}{{ title }}{% endif %}"
+                   placeholder="请输入投票标题（20字以内）"
+                   class="form-input" required>
+            <div class="error-tip" id="titleErr">{{ titleErr }}</div>
+        </div>
+
+        <!-- 投票描述 -->
+        <div class="form-group">
+            <label for="text" class="form-label">投票描述（可选）</label>
+            <input type="text" id="text" name="text" maxlength="200"
+                   value="{% if text %}{{ text }}{% endif %}"
+                   placeholder="请输入投票描述（200字以内）"
+                   class="form-input">
+        </div>
+
+        <!-- 投票选项区域 -->
+        <div class="options-section">
+            <h2 class="options-title">添加投票选项</h2>
+            <div id="options-container" class="options-container">
+                <!-- 选项会动态添加到这里 -->
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="add-option-btn" class="add-option-btn">
+                    <span>➕</span> 添加选项
+                </button>
+                <button id = "create-poll-btn" type="submit" class="submit-btn">创建投票</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 选项模板 -->
+<template id="option-template">
+    <div class="option-item">
+        <input type="text" name="options[]" maxlength="50"
+               placeholder="请输入选项内容（50字以内）"
+               class="option-input">
+        <button type="button" class="delete-btn">🗑️ 删除</button>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/create_poll.js' %}"></script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/create_poll.css' %}">
+{% endblock %}

@@ -1,0 +1,364 @@
+<!-- templates/dashboard/userCenter.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}个人中心 - DjangoVote{% endblock %}
+
+{% block content %}
+<!-- 用户欢迎区域 -->
+<section class="user-center-header">
+    <div class="user-avatar">
+        <div class="avatar-circle">
+            {{ username|first|upper }}
+        </div>
+    </div>
+    <h1 class="user-greeting">欢迎回来，{{ username }}！</h1>
+    <p>这是您来到DjangoVote的第 {{ register_days }} 天</p>
+    <p class="user-subtitle">这里是您的个人管理中心</p>
+</section>
+
+<!-- 用户基本信息卡片 -->
+<section class="info-section">
+    <div class="info-card">
+        <div class="card-header">
+            <i class="icon-user"></i>
+            <h2>基本信息</h2>
+        </div>
+        <div class="card-content">
+            <div class="info-item">
+                <span class="info-label">用户名：</span>
+                <span class="info-value">{{ username }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">邮箱：</span>
+                <span class="info-value">{{ email }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 投票统计区域 -->
+<section class="stats-section">
+    <!-- 发布的投票统计 -->
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="icon-publish"></i>
+        </div>
+        <div class="stat-content">
+            <h3>发布的投票</h3>
+            <div class="stat-number">{{ publish_count|default:"0" }}</div>
+            <p class="stat-desc">截止到{{now_date}}你发布了{{ publish_count|default:"0" }}个投票</p>
+            <p class="stat-participants">共有{{ participate_count_to_self|default:"0" }}个人参与了你的投票!</p>
+        </div>
+        <div class="recent-section">
+            <p class="recent-title">最近发布👇</p>
+
+            <div class = "placeholder-text">
+                {% if latest_poll %}
+                    <div class="poll-cards-grid">
+                            <div class="poll-card">
+                                <div class="poll-content">
+                                    <h3 class="poll-question">{{ latest_poll.question }}</h3>
+                                    <a href="{% url 'polls:poll_index' latest_poll.poll_id %}" class="poll-cta">查看详情</a>
+                                </div>
+                            </div>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <h3>暂无投票</h3>
+                        <p>你还没有发起过投票，快来发起你的第一个投票！</p>
+                        <!-- 可以在这里添加创建投票的链接按钮 -->
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+        <div>
+            <a href="{% url 'polls:my_polls' %}" class = "poll-cta">查看您发起的所有投票</a>
+        </div>
+    </div>
+
+    <!-- 参与的投票统计 -->
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="icon-participate"></i>
+        </div>
+        <div class="stat-content">
+            <h3>参与的投票</h3>
+            <div class="stat-number">{{ participate_count_to_other|default:"0" }}</div>
+            <p class="stat-desc">截止到{{now_date}}你参与了{{ participate_count_to_other|default:"0" }}个投票</p>
+            <p class="stat-participants">看看最近参与的投票!</p>
+        </div>
+        <div class="recent-section">
+            <p class="recent-title">最近参与👇</p>
+            <!-- 此处展示用户最近参与的五个投票，该业务待完成 -->
+            <div class="placeholder-text">
+                {% if voted_poll_record %}
+                    <div class="poll-cards-grid">
+                            <div class="poll-card">
+                                <div class="poll-content">
+                                    <h3 class="poll-question">{{ voted_poll_record.poll.question }}</h3>
+                                    <a href="{% url 'polls:poll_index' voted_poll_record.poll.poll_id %}" class="poll-cta">查看详情</a>
+                                </div>
+                            </div>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <h3>暂无投票</h3>
+                        <p>你还没有参与过投票，快去参与投票！</p>
+                        <!-- 可以在这里添加创建投票的链接按钮 -->
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'polls:voted_polls' %}" class = "poll-cta">查看您参与的所有投票</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/poll_list.css' %}">
+
+<style>
+    /* 用户中心特有样式 - 不会与base.css冲突 */
+    /* 卡片样式 */
+    .poll-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    /* 固定高度和最小宽度 */
+    height: 190px; /* 固定高度 */
+    min-width: 320px; /* 最小宽度确保一致性 */
+    display: flex;
+    flex-direction: column;
+}
+
+    /* 用户头部区域 */
+    .user-center-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-center-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        animation: float 20s linear infinite;
+    }
+
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+        border: 3px solid rgba(255,255,255,0.3);
+    }
+
+    .user-greeting {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+
+    .user-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    /* 基本信息卡片 */
+    .info-section {
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 1rem;
+    }
+
+    .card-header h2 {
+        color: #333;
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .icon-user::before {
+        content: "👤";
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #666;
+    }
+
+    .info-value {
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    /* 统计卡片区域 */
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .stat-icon {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .icon-publish::before {
+        content: "📊";
+        font-size: 3rem;
+    }
+
+    .icon-participate::before {
+        content: "👍";
+        font-size: 3rem;
+    }
+
+    .stat-content {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-content h3 {
+        color: #333;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #667eea;
+        margin: 1rem 0;
+    }
+
+    .stat-desc {
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-participants {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .recent-section {
+        border-top: 2px solid #f0f0f0;
+        padding-top: 1.5rem;
+    }
+
+    .recent-title {
+        text-align: center;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .placeholder-text {
+        text-align: center;
+        color: #999;
+        font-style: italic;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    /* 动画效果 */
+    @keyframes float {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .stats-section {
+            grid-template-columns: 1fr;
+        }
+
+        .user-greeting {
+            font-size: 1.8rem;
+        }
+
+        .avatar-circle {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}

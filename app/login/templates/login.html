@@ -1,0 +1,39 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DjangoVote - 登录</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class = "center-container">
+
+        <form id="login-Form" class = "register-card" method="get" action = "{% url 'login:login_API' %}">
+            {% csrf_token %}
+            <!-- 用户名 -->
+            <h2 class = "form-title">登录</h2>
+            <div style = "margin-bottom: 20px;">
+                <label for="account">账号<sup>*</sup></label>
+                <input class = "input-line" type="text" id="account" name="account" value="{{ userAccount }}" placeholder = "请输入账号" required>
+                <div class="error-tip" id="nameErr" style="visibility: visible;">{{ nameErr }}</div>
+            </div>
+            <br>
+            <!-- 密码 -->
+            <div style = "margin-bottom: 20px;">
+                <label for="password">密码<sup>*</sup></label>
+                <input class = "input-line" type="password" id="password" name="password" placeholder=" 请输入密码" required>
+                <div class="error-tip" id="pswErr" style="visibility: visible;">{{ pswErr }}</div>
+            </div>
+            <!-- 登录按钮 -->
+            <button type="submit" class="btn">登录</button>
+            <div class="form-footer">
+            <!-- 如果未开发完注册业务先注释掉该行 -->
+            没有账号？<a href="{% url 'login:register' %}">去注册</a>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+</html>

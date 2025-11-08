@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎来到DjangoVote！</title>
+    <link rel="stylesheet" href="{% static 'css/welcome.css' %}">
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="header">
+            <h1>欢迎来到DjangoVote！</h1>
+            <br>
+        </div>
+
+        <div class="content-section">
+            <h2>关于DjangoVote</h2>
+            <p>DjangoVote是一个基于Django框架的投票系统，用于管理和进行各种投票活动。</p>
+            <p>这是我的第一个Django项目，我通过完成DjangoVote来学习Django框架的基本概念和实践！</p>
+        </div>
+
+        <div class="content-section">
+            <h2>DjangoVote能做什么？</h2>
+            <ul class="feature-list">
+                <li>用户注册与登录系统</li>
+                <li>创建和管理投票活动</li>
+                <li>参与投票和查看结果</li>
+                <li>实时数据统计和分析</li>
+                <li>安全可靠的投票机制</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>如何使用DjangoVote？</h2>
+            <p>用户可以通过注册账号并登录到DjangoVote平台。</p>
+            <p>在平台上，用户可以创建投票活动，设置投票选项，并邀请其他用户参与投票。</p>
+            <p>投票完成后，用户可以查看投票结果和数据。</p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{% url 'login:register' %}" class="btn btn-secondary">注册新账号</a>
+            <a href="{% url 'login:login' %}" class="btn">立即登录</a>
+        </div>
+    </div>
+</body>
+</html>

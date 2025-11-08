@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ poll_title }} - DjangoVote{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div class="poll-detail-container">
+    <!-- 投票头部信息 -->
+    <div class="poll-header">
+        <div class="poll-title-section">
+            <h1 class="poll-title">{{ poll_title }}</h1>
+            {% if poll_text %}
+                <p class="poll-description">{{ poll_text }}</p>
+            {% endif %}
+        </div>
+
+        <!-- 投票状态提示 -->
+        {% if voted %}
+            <div class="voted-status">
+                <div class="status-badge">已投票</div>
+                <p class="voted-choice">您已选择：<strong>{{ voted_choice }}</strong></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 投票基本信息 -->
+    <div class="poll-info-grid">
+        <div class="info-card">
+            <span class="info-label">投票ID</span>
+            <span class="info-value">#{{ poll_id }}</span>
+        </div>
+        <div class="info-card">
+            <span class="info-label">创建人</span>
+            <span class="info-value">{{ created_by }}</span>
+        </div>
+        <div class="info-card">
+            <span class="info-label">发布时间</span>
+            <span class="info-value">{{ pub_date }}</span>
+        </div>
+    </div>
+
+    <!-- 投票选项区域 -->
+    <div class="options-section">
+        <h2 class="section-title">投票选项</h2>
+        <div class="options-grid">
+            {% for option in options %}
+                <div class="option-card {% if voted and option.choice_text == voted_choice %}voted-option{% endif %}">
+                    <div class="option-content">
+                        <div class="option-text">
+                            <h3 class="option-title">{{ option.choice_text }}</h3>
+                            <div class="vote-count">
+                                <span class="count-number">{{ option.votes }}</span>
+                                <span class="count-label">票</span>
+                            </div>
+                        </div>
+
+                        <div class="option-actions">
+                            {% if not voted %}
+                                <a href="{% url 'polls:vote_API' poll_id option.id %}" class="vote-btn">
+                                    <span>投票</span>
+                                </a>
+                            {% elif voted and option.choice_text == voted_choice %}
+                                <div class="voted-indicator">
+                                    <span>已投过</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/poll_index.css' %}">
+{% endblock %}

@@ -1,0 +1,209 @@
+<!-- templates/dashboard/index.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}首页 - DjangoVote{% endblock %}
+
+{% block content %}
+<!-- 用户欢迎区域 -->
+<section class="welcome-section">
+    <h1>{{ greeting }}&nbsp;&nbsp;{{ username }}</h1>
+    <p>开始创建和管理你的投票吧</p>
+</section>
+<!-- 用户统计信息区域（预留接口） -->
+<section class="stats-section">
+    <h2>我的统计</h2>
+    <div class="stats-grid">
+        <!-- 这些数据将从后端获取 -->
+        <div class="stat-card">
+            <div class="stat-number" id="created-polls">{{ publish_count|default:"0" }}</div>
+            <div class="stat-label">创建的投票</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="participated-polls">{{ participate_count_to_other|default:"0" }}</div>
+            <div class="stat-label">参与的投票</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="total-votes">{{ participate_count_to_self|default:"0" }}</div>
+            <div class="stat-label">总投票数</div>
+        </div>
+    </div>
+</section>
+
+<!-- 快速操作区域 -->
+<section class="quick-actions">
+    <h2>快速操作</h2>
+    <div class="action-buttons">
+        <a href="{% url 'polls:create_poll' %}" class="btn btn-primary">创建新投票🧐</a>
+        <a href="{% url 'polls:poll_list' %}" class="btn btn-secondary">浏览所有投票📋</a>
+    </div>
+</section>
+
+<!-- 最新投票区域（预留接口） -->
+<section class="recent-polls">
+    <h2>最新投票✍️</h2>
+    <div id="recent-polls-list">
+
+
+        <!------------------------ 这里将通过后端动态填充投票列表 ----------------------------->
+
+        <div class="poll-list-container">
+
+            {% if nine_recent_polls %}
+                <div class="recent-poll-cards-grid">
+                    {% for poll in nine_recent_polls %}
+                        <div class="poll-card">
+                            <div class="poll-content">
+                                <h3 class="poll-question">{{ poll.question }}</h3>
+
+                                {% if poll.question_description %}
+                                    <p class="poll-description">{{ poll.question_description }}</p>
+                                {% endif %}
+
+                                <div class="poll-meta">
+                                    <span class="poll-id">发起人：{{ poll.created_by.name }}</span>
+                                    <span class="poll-id">ID:&nbsp;#{{ poll.poll_id }}</span>
+                                    <span class="poll-date">{{ poll.pub_date|date:"Y-m-d " }}</span>
+                                </div>
+                                <a href="{% url 'polls:poll_index' poll.poll_id %}" class="poll-cta">查看详情</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3 style = "align-items: center;">暂无投票</h3>
+                    <p>还没有人发起投票，快来成为DjangoVote第一个发起者！</p>
+                    <!-- 可以在这里添加创建投票的链接按钮 -->
+                </div>
+            {% endif %}
+        </div>
+        <!------------------------ 这里将通过后端动态填充投票列表 ----------------------------->
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/poll_list.css' %}">
+
+<style>
+    /* 投票列表网格布局 */
+    .recent-poll-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 固定三列 */
+    gap: 25px;
+    margin-top: 30px;
+}
+    /* 首页特有样式 */
+    .welcome-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .welcome-section h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-section p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .stats-section {
+        margin-bottom: 2rem;
+    }
+    
+    .stats-section h2 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        border-left: 4px solid #667eea;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .quick-actions {
+        margin-bottom: 2rem;
+    }
+    
+    .quick-actions h2 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+        background: #667eea;
+    }
+    
+    .btn-secondary {
+        background: #8470FF;
+    }
+    
+    .btn-secondary:hover {
+        background: #483D8B;
+    }
+    
+    .recent-polls h2 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+    
+    #recent-polls-list {
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+    }
+</style>
+{% endblock %}

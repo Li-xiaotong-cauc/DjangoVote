@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - DjangoVote{% endblock %}
+
+{% block content %}
+    <h1>这是投票结果页,开发中...</h1>
+    <h1>这个页面用来测试投票结果是否被顺利接收到</h1>
+    <h1>{{error}}</h1>
+    <h1>投票成功，结果如下：</h1>
+    <h2>您投票的选项是：{{ choice }}</h2>
+
+
+
+    <p>投票ID: {{ poll_id }}</p>
+    <p>投票标题: {{ poll_title }}</p>
+    <p>投票内容: {{ poll_text }}</p>
+    <p>创建人: {{ created_by }}</p>
+    <p>发布时间: {{ pub_date }}</p>
+    <p>选项:</p>
+
+        {% for option in options %}
+            <div>
+                <h2>{{ option }}&nbsp;&nbsp;&nbsp;&nbsp;得票：{{ option.votes }}</h2>
+            </div>
+        {% endfor %}
+
+
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}

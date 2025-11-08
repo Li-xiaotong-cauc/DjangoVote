@@ -1,0 +1,276 @@
+/* Poll Index Page Styles */
+.poll-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* 投票头部样式 */
+.poll-header {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.poll-title-section {
+    margin-bottom: 1.5rem;
+}
+
+.poll-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.poll-description {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 投票状态样式 */
+.voted-status {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.voted-choice {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* 投票信息网格 */
+.poll-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.info-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.info-value {
+    display: block;
+    font-size: 1.3rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+/* 选项区域样式 */
+.options-section {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.options-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* 选项卡片样式 */
+.option-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    color: white;
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.option-card:hover::before {
+    opacity: 1;
+}
+
+.option-card.voted-option {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(76, 175, 80, 0.3);
+}
+
+.option-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.option-text {
+    flex: 1;
+}
+
+.option-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.vote-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.count-number {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.count-label {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* 投票按钮样式 */
+.option-actions {
+    margin-left: 2rem;
+}
+
+.vote-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: inline-block;
+}
+
+.vote-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.voted-indicator {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .poll-detail-container {
+        padding: 1rem;
+    }
+
+    .poll-header,
+    .options-section {
+        padding: 1.5rem;
+    }
+
+    .poll-title {
+        font-size: 2rem;
+    }
+
+    .option-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .option-actions {
+        margin-left: 0;
+    }
+
+    .poll-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.option-card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.option-card:nth-child(1) { animation-delay: 0.1s; }
+.option-card:nth-child(2) { animation-delay: 0.2s; }
+.option-card:nth-child(3) { animation-delay: 0.3s; }
+.option-card:nth-child(4) { animation-delay: 0.4s; }
+.option-card:nth-child(5) { animation-delay: 0.5s; }
