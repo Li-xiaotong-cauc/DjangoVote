@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xo-v2g_$fmuq9-t=*=!id0*5fl5z15f!61shyq6l&&_!wx4_=w'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['EdisonLee.pythonanywhere.com','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -79,14 +79,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         # 连接的数据库需要提前手动在 myslq 中创建数据库
-        'NAME': 'EdisonLee$djangovote',
+        'NAME': 'DjangoVote',
         # 其他按需设置
-        'USER': 'EdisonLee',
-        'PASSWORD': 'MyPassword0121',
-        'HOST': 'EdisonLee.mysql.pythonanywhere-services.com',
-        'OPTIONS':{
-            'init_command':"SET sql_mode='STRICT_TRANS_TABLES'",
-        }
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': 3306
     }
 }
 
@@ -133,8 +131,7 @@ mimetypes.add_type('text/css', '.css')   # 关键一行
 mimetypes.add_type('text/javascript', '.js')  # 顺手把 JS 也修
 
 
-STATIC_URL = '/static/'
-STATIC_ROOT = '/home/EdisonLee/DjangoVote/staticfiles'
+STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
