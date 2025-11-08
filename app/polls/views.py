@@ -29,6 +29,14 @@ def poll_index(request, poll_id):  # 添加poll_id参数
 
         #获取当前用户账号，用以检查其是否已投票
         account = request.session.get("account")
+        user = userInfo.objects.filter(account=account).first()
+        # 检查用户是否为投票创建者
+        if user == poll_obj.created_by:
+            # 如果用户为投票创建者，设置owner为True
+            owner = True
+        else:
+            owner = False
+
         if account:
             #检查用户是否已投票
             voted = vote.objects.filter(voter=userInfo.objects.get(account=account), poll=poll_obj).exists()
@@ -53,12 +61,14 @@ def poll_index(request, poll_id):  # 添加poll_id参数
             "pub_date": poll_obj.pub_date.strftime("%Y-%m-%d"),
             "voted": voted,
             "voted_choice": voted_choice,
+            "owner": owner,
         })
     except poll.DoesNotExist:
         # 如果投票不存在，返回404页面或错误信息
         return render(request, 'poll_index.html', {
             "error": f"投票ID {poll_id} 不存在"
         })
+
 
 
 def create_poll(request):
@@ -134,49 +144,97 @@ def show_voted_polls(request):
         })
 
 
-def vote_API(request,poll_id,choice_id):
-        #接收投票POST请求
-        if request.method == "GET":
-            #获取到投票者的账号
-            account = request.session.get("account")
-            #根据账号获取到投票者的用户对象
-            user = userInfo.objects.filter(account = account).first()
-            #根据投票ID获取到投票对象
-            poll_obj = poll.objects.filter(poll_id = poll_id).first()
-            #获取到投票对象的所有选项
-            options = poll_obj.choices.all()
-            if not poll_obj:
-                return render(request, 'vote_result.html', {
-                    "error": f"投票ID {poll_id} 不存在"
-                })
-            if not choice_id:
-                return render(request, 'vote_result.html', {
-                    "error": "请选择一个选项"
-                })
-            choice_obj = choice.objects.filter(id = choice_id).first()
-            if not choice_obj:
-                return render(request, 'vote_result.html', {
-                    "error": f"选项ID {choice_id} 不存在"
-                })
-            choice_obj.votes += 1
-            choice_obj.save()
-            vote.objects.create(
-                poll = poll_obj,
-                voter = user,
-                choice = choice_obj,
-            )
+def vote_API(request, poll_id, choice_id):
+    # 接收投票POST请求
+    if request.method == "GET":
+        # 获取到投票者的账号
+        account = request.session.get("account")
+        # 根据账号获取到投票者的用户对象
+        user = userInfo.objects.filter(account=account).first()
+        # 根据投票ID获取到投票对象
+        poll_obj = poll.objects.filter(poll_id=poll_id).first()
+        # 获取到投票对象的所有选项
+        options = poll_obj.choices.all()
+
+        if not poll_obj:
             return render(request, 'vote_result.html', {
+                "error": f"投票ID {poll_id} 不存在"
+            })
+        if not choice_id:
+            return render(request, 'vote_result.html', {
+                "error": "请选择一个选项"
+            })
+        choice_obj = choice.objects.filter(id=choice_id).first()
+        if not choice_obj:
+            return render(request, 'vote_result.html', {
+                "error": f"选项ID {choice_id} 不存在"
+            })
+
+        # 检查用户是否已经投过票
+        existing_vote = vote.objects.filter(poll=poll_obj, voter=user).first()
+        if existing_vote:
+            return render(request, 'vote_result.html', {
+                "error": "您已经投过票了，不能重复投票",
                 "poll_id": poll_obj.poll_id,
                 "poll_title": poll_obj.question,
                 "poll_text": poll_obj.question_description,
-                "created_by": poll_obj.created_by.name if poll_obj.created_by else "匿名用户",
+                "vote_user": user.name,
                 "options": options,
-                "pub_date": poll_obj.pub_date,
-                "choice": choice_obj.choice_text,
-                "votes": choice_obj.votes,
+                "vote_date": existing_vote.voted_at.strftime("%Y-%m-%d %H:%M"),
+                "choice": existing_vote.choice.choice_text,
+                "votes": existing_vote.choice.votes,
+                "voted": True,  # 用户已经投过票
+                "voted_choice": existing_vote.choice.choice_text,
             })
 
-
+        # 如果用户没有投过票，则进行投票
+        choice_obj.votes += 1
+        choice_obj.save()
+        vote.objects.create(
+            poll=poll_obj,
+            voter=user,
+            choice=choice_obj,
+        )
         return render(request, 'vote_result.html', {
-            "error": "投票失败"
+            "poll_id": poll_obj.poll_id,
+            "poll_title": poll_obj.question,
+            "poll_text": poll_obj.question_description,
+            "vote_user": user.name,
+            "options": options,
+            "vote_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "choice": choice_obj.choice_text,
+            "votes": choice_obj.votes,
+            "voted": True,  # 投票成功后设置为True
+            "voted_choice": choice_obj.choice_text,
         })
+
+    return render(request, 'vote_result.html', {
+        "error": "投票失败"
+    })
+
+
+def delete_poll_API(request, poll_id):
+    # 获取当前操作者的账号，确认是否有权限删除该投票
+    account = request.session.get("account")
+    user = userInfo.objects.filter(account=account).first()
+
+    # 先检查投票是否存在
+    poll_obj = poll.objects.filter(poll_id=poll_id).first()
+    if not poll_obj:
+        return HttpResponse("投票不存在")
+
+    if user == poll_obj.created_by:
+        # 删除投票记录
+        vote.objects.filter(poll=poll_id).delete()
+        print("投票记录删除成功")
+        # 删除投票选项
+        choice.objects.filter(poll=poll_id).delete()
+        print("投票选项删除成功")
+        # 删除投票
+        poll.objects.filter(poll_id=poll_id).delete()
+        print("投票删除成功")
+
+        return redirect(reverse('dashboard:index'))
+
+    else:
+        return HttpResponse("您没有权限删除该投票")

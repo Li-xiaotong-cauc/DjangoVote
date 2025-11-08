@@ -15,14 +15,26 @@
             {% endif %}
         </div>
 
-        <!-- 投票状态提示 -->
+        <!-- 投票状态提示区域 -->
         {% if voted %}
             <div class="voted-status">
                 <div class="status-badge">已投票</div>
                 <p class="voted-choice">您已选择：<strong>{{ voted_choice }}</strong></p>
             </div>
         {% endif %}
+        <br>
+                {% if owner %}
+                    <div class="poll-actions-container">
+                        <a href="{% url 'polls:delete_poll_API' poll_id %}" class="delete-poll-btn" onclick="return confirmDelete()">
+                            删除此投票
+                        </a>
+                    </div>
+                {% endif %}
+
     </div>
+
+    <!-- 投票操作区域（固定在右上角） -->
+
 
     <!-- 投票基本信息 -->
     <div class="poll-info-grid">
@@ -72,6 +84,12 @@
         </div>
     </div>
 </div>
+
+<script>
+function confirmDelete() {
+    return confirm('确定要删除这个投票吗？此操作不可撤销！');
+}
+</script>
 {% endblock %}
 
 {% block extra_css %}

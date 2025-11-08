@@ -20,4 +20,6 @@ urlpatterns = [
     path('voted_polls/',views.show_voted_polls,name='voted_polls'),
     #投票API
     path('vote_API/<int:poll_id>/<int:choice_id>/',views.vote_API,name='vote_API'),
+    #删除投票API
+    path('delete_API/<int:poll_id>/',views.delete_poll_API,name='delete_poll_API'),
 ]

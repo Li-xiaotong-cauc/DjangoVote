@@ -1,31 +1,113 @@
 {% extends "base.html" %}
 
-{% block title %}首页 - DjangoVote{% endblock %}
+{% block title %}投票结果 - DjangoVote{% endblock %}
+
+{% load static %}
 
 {% block content %}
-    <h1>这是投票结果页,开发中...</h1>
-    <h1>这个页面用来测试投票结果是否被顺利接收到</h1>
-    <h1>{{error}}</h1>
-    <h1>投票成功，结果如下：</h1>
-    <h2>您投票的选项是：{{ choice }}</h2>
+<div class="vote-result-container">
+    {% if error %}
+        <!-- 错误信息显示 -->
+        <div class="error-message">
+            <h2>投票失败</h2>
+            <p>{{ error }}</p>
+            <a href="{% url 'polls:poll_index' poll_id %}" class="back-btn">返回投票页面</a>
+        </div>
+    {% else %}
+        <!-- 投票成功显示 -->
+        <div class="result-header">
+            <h1 class="result-title">投票结果</h1>
 
+            <!-- 投票状态提示 -->
+            {% if voted %}
+                <div class="voted-status">
+                    <div class="status-badge">已投票</div>
+                    <p class="voted-choice">您已选择：<strong>{{ voted_choice }}</strong></p>
+                    <p class="vote-time">投票时间：{{ vote_date }}</p>
+                </div>
+            {% endif %}
+        </div>
 
-
-    <p>投票ID: {{ poll_id }}</p>
-    <p>投票标题: {{ poll_title }}</p>
-    <p>投票内容: {{ poll_text }}</p>
-    <p>创建人: {{ created_by }}</p>
-    <p>发布时间: {{ pub_date }}</p>
-    <p>选项:</p>
-
-        {% for option in options %}
-            <div>
-                <h2>{{ option }}&nbsp;&nbsp;&nbsp;&nbsp;得票：{{ option.votes }}</h2>
+        <!-- 投票基本信息 -->
+        <div class="poll-info-grid">
+            <div class="info-card">
+                <span class="info-label">投票ID</span>
+                <span class="info-value">#{{ poll_id }}</span>
             </div>
-        {% endfor %}
+            <div class="info-card">
+                <span class="info-label">投票标题</span>
+                <span class="info-value">{{ poll_title }}</span>
+            </div>
+            <div class="info-card">
+                <span class="info-label">投票人</span>
+                <span class="info-value">{{ vote_user }}</span>
+            </div>
+            <div class="info-card">
+                <span class="info-label">投票时间</span>
+                <span class="info-value">{{ vote_date }}</span>
+            </div>
+        </div>
+
+        <!-- 投票描述 -->
+        {% if poll_text %}
+            <div class="poll-description-section">
+                <h3>投票描述</h3>
+                <p>{{ poll_text }}</p>
+            </div>
+        {% endif %}
+
+        <!-- 投票结果统计 -->
+        <div class="results-section">
+            <h2 class="section-title">投票结果统计</h2>
+
+            <!-- 用户选择显示 -->
 
 
+            <!-- 所有选项结果 -->
+            <div class="results-grid">
+                {% for option in options %}
+                    <div class="result-card {% if voted and option.choice_text == voted_choice %}user-choice{% endif %}">
+                        <div class="result-content">
+                            <div class="option-info">
+                                <h4 class="option-title">{{ option.choice_text }}</h4>
+                                <div class="vote-stats">
+                                    <span class="vote-count">{{ option.votes }} 票</span>
+                                    {% if option.votes > 0 %}
+                                        <span class="vote-percentage">
+                                            ({{ option.votes|add:0|default:0 }}%)
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- 进度条 -->
+                            <div class="progress-bar">
+                                <div class="progress-fill"
+                                     style="width: {% if option.votes > 0 %}{{ option.votes|add:0|default:0 }}%{% else %}0%{% endif %}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 用户选择标记 -->
+                        {% if voted and option.choice_text == voted_choice %}
+                            <div class="user-selection-marker">
+                                <span>✓ 您的选择</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-buttons">
+            <a href="{% url 'polls:poll_index' poll_id %}" class="action-btn secondary">返回投票页面</a>
+            <a href="{% url 'polls:poll_list' %}" class="action-btn primary">查看所有投票</a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/vote_result.css' %}">
 {% endblock %}
