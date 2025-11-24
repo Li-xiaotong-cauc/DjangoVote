@@ -80,9 +80,14 @@ from django.conf import settings
 
 def showAvatar_API(request):
     print("showAvatar_API启动")
-    avatar_url = None
-    avatar_name = None
+
     if request.method == "POST" and "avatar" in request.FILES:
+
+        account = request.session.get("account")
+
+        user = userInfo.objects.filter(account=account)[0]
+
+
         avatar = request.FILES["avatar"]
         if avatar:
 
@@ -100,6 +105,9 @@ def showAvatar_API(request):
             request.session['avatar_url'] = avatar_url
             request.session['avatar_name'] = avatar_name
 
+            user.avatar_name = avatar_name
+            user.save()
+
             print(f'检测到url：{avatar_url}')
             print(f'检测到name：{avatar_name}')
 
@@ -113,7 +121,7 @@ def userCenter(request):
 
     account = request.session.get("account")
 
-    avatar_name = request.session.get("avatar_name")
+    avatar_name = userInfo.objects.filter(account=account)[0].avatar_name
 
 
     if not account:

@@ -25,6 +25,13 @@ class userInfo(models.Model):
         verbose_name='创建时间',
         auto_now_add=True,
     )
+    avatar_name = models.CharField(
+        verbose_name='头像名称',
+        max_length=150,
+        blank = True,
+        null = True,
+        help_text = '用户头像的文件名',
+    )
 
     class Meta:
         db_table = 'tb_user'
