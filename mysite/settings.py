@@ -64,6 +64,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 开启对 MEDIA_URL 的支持
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -79,10 +81,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         # 连接的数据库需要提前手动在 myslq 中创建数据库
-        'NAME': 'DjangoVote',
+        'NAME': 'DjangoProject_DB',
         # 其他按需设置
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'MyPassword0121',
         'HOST': '127.0.0.1',
         'PORT': 3306
     }
@@ -126,6 +128,7 @@ STATICFILES_DIRS = [
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+
 import mimetypes
 mimetypes.add_type('text/css', '.css')   # 关键一行
 mimetypes.add_type('text/javascript', '.js')  # 顺手把 JS 也修

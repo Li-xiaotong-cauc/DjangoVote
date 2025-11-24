@@ -9,4 +9,6 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('welcome/', views.welcome, name="welcome"),
     path('userCenter/', views.userCenter, name="userCenter"),
+    path('showAvatar/', views.showAvatar, name="showAvatar"),
+    path('showAvatar_API/', views.showAvatar_API, name="showAvatar_API"),
 ]

@@ -1,0 +1,30 @@
+<!-- templates/dashboard/showAvatar.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}头像上传测试 - DjangoVote{% endblock %}
+
+{% block content %}
+
+<form method="post" action = "{% url 'dashboard:showAvatar_API' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="avatar">选择头像：</label>
+        <input type="file" id="avatar" name="avatar" accept="image/*">
+    </div>
+    <button type="submit">上传头像</button>
+</form>
+<div>
+{% if avatar_name %}
+        <p>当前头像：{{ avatar_name }}</p>
+        <p>头像URL：{{ avatar_url }}</p>
+        <img src="{{ MEDIA_URL }}avatar/{{ avatar_name }}" alt="用户头像" width = 200px height = 200px>
+{% else %}
+        <p>尚未上传头像</p>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}

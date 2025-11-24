@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -73,6 +74,59 @@ def index(request):
             "nine_recent_polls": nine_recent_polls,
         })
 
+import os
+from django.conf import settings
+
+def showAvatar(request):
+    avatar_name = request.session.get("avatar_name")
+    avatar_url = request.session.get("avatar_url")
+
+    return render(request, "showAvatar.html", {
+        "avatar_url": avatar_url,
+        "avatar_name": avatar_name,
+    })
+
+def showAvatar_API(request):
+    avatar_url = None
+    avatar_name = None
+    if request.method == "POST" and "avatar" in request.FILES:
+        avatar = request.FILES["avatar"]
+        if avatar:
+
+            avatar_dir = os.path.join(settings.MEDIA_ROOT,'avatar')
+
+            fs = FileSystemStorage(location=avatar_dir)
+
+            if fs.exists(avatar.name):
+                fs.delete(avatar.name)
+
+            avatar_name = fs.save(avatar.name, avatar)
+            avatar_url = fs.url(avatar_name)
+
+            # 将头像信息保存到Session
+            request.session['avatar_url'] = avatar_url
+            request.session['avatar_name'] = avatar_name
+
+            print(f'检测到url：{avatar_url}')
+            print(f'检测到name：{avatar_name}')
+
+            return render(request, "showAvatar.html", {
+                "avatar_url": avatar_url,
+                "avatar_name": avatar_name,
+            })
+
+        else:
+            avatar_name = request.session.get("avatar_name")
+            avatar_url = request.session.get("avatar_url")
+            return render(request, "showAvatar.html", {
+                "avatar_url": avatar_url,
+                "avatar_name": avatar_name,
+            })
+
+
+    return redirect(reverse("dashboard:showAvatar"))
+
+
 
 def userCenter(request):
 
@@ -85,7 +139,12 @@ def userCenter(request):
 
 
     else:
-        # 获取当前时间,确定问候语
+        #获取用户头像
+
+
+
+
+        # 获取当前时间
         date = datetime.now().strftime("%Y-%m-%d")
         #确定此页面的用户信息
         display_info = userInfo.objects.filter(account=account)
@@ -117,6 +176,8 @@ def userCenter(request):
             poll__created_by=display_info[0]  # 排除自己创建的投票
         ).values('poll').distinct().count()
         ##############################################################################
+
+
 
 
 

@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -27,3 +29,6 @@ urlpatterns = [
     #polls应用的主路由
     path('polls/',include('polls.urls')),
 ]
+# 仅在开发模式下添加媒体文件URL路由
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
