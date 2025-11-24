@@ -77,16 +77,9 @@ def index(request):
 import os
 from django.conf import settings
 
-def showAvatar(request):
-    avatar_name = request.session.get("avatar_name")
-    avatar_url = request.session.get("avatar_url")
-
-    return render(request, "showAvatar.html", {
-        "avatar_url": avatar_url,
-        "avatar_name": avatar_name,
-    })
 
 def showAvatar_API(request):
+    print("showAvatar_API启动")
     avatar_url = None
     avatar_name = None
     if request.method == "POST" and "avatar" in request.FILES:
@@ -110,27 +103,17 @@ def showAvatar_API(request):
             print(f'检测到url：{avatar_url}')
             print(f'检测到name：{avatar_name}')
 
-            return render(request, "showAvatar.html", {
-                "avatar_url": avatar_url,
-                "avatar_name": avatar_name,
-            })
+            return redirect(reverse("dashboard:userCenter"))
 
-        else:
-            avatar_name = request.session.get("avatar_name")
-            avatar_url = request.session.get("avatar_url")
-            return render(request, "showAvatar.html", {
-                "avatar_url": avatar_url,
-                "avatar_name": avatar_name,
-            })
-
-
-    return redirect(reverse("dashboard:showAvatar"))
+    return redirect(reverse("dashboard:userCenter"))
 
 
 
 def userCenter(request):
 
     account = request.session.get("account")
+
+    avatar_name = request.session.get("avatar_name")
 
 
     if not account:
@@ -139,11 +122,6 @@ def userCenter(request):
 
 
     else:
-        #获取用户头像
-
-
-
-
         # 获取当前时间
         date = datetime.now().strftime("%Y-%m-%d")
         #确定此页面的用户信息
@@ -178,9 +156,6 @@ def userCenter(request):
         ##############################################################################
 
 
-
-
-
         return render(request, "userCenter.html", {
             "now_date": date,
             "username": display_info[0].name,
@@ -191,4 +166,5 @@ def userCenter(request):
             "participate_count_to_other": participate_count_to_other,
             "latest_poll": latest_poll,
             "voted_poll_record": voted_poll_record,
+            "avatar_name": avatar_name,
         })

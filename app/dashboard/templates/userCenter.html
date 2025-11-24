@@ -7,17 +7,33 @@
 {% block content %}
 <!-- 用户欢迎区域 -->
 <section class="user-center-header">
-    <div class="user-avatar">
-        <div class="avatar-circle">
-            {{ username|first|upper }}
+    <div class="user-avatar-container">
+        <div class="user-avatar">
+            {% if not avatar_name %}
+            <div class="avatar-circle">
+                {{ username|first|upper }}
+            </div>
+            {% else %}
+            <img src="{{ MEDIA_URL }}avatar/{{ avatar_name }}" alt="用户头像" class="avatar-image">
+            {% endif %}
+        </div>
+        
+        <!-- 单按钮上传表单 -->
+        <div class="avatar-upload-container">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'dashboard:showAvatar_API' %}" class="avatar-form" id="avatarForm">
+                {% csrf_token %}
+                <input type="file" id="avatar" name="avatar" accept="image/*" class="file-input" onchange="this.form.submit()">
+                <label for="avatar" class="single-upload-button">
+                    <span class="button-text">更换头像</span>
+                </label>
+            </form>
         </div>
     </div>
+    
     <h1 class="user-greeting">欢迎回来，{{ username }}！</h1>
     <p>这是您来到DjangoVote的第 {{ register_days }} 天</p>
-    <p class="user-subtitle">这里是您的个人管理中心</p>
+
 </section>
-
-
 
 <!-- 用户基本信息卡片 -->
 <section class="info-section">
@@ -124,6 +140,149 @@
 <link rel="stylesheet" href="{% static 'css/poll_list.css' %}">
 
 <style>
+     /* 用户头像容器布局 */
+    .user-avatar-container {
+    display: flex;
+    flex-direction: column; /* 改为垂直排列 */
+    align-items: center;
+    justify-content: center;
+    gap: 1rem; /* 调整间距 */
+    margin-bottom: 1.5rem;
+    }
+
+    /* 头像样式优化 */
+    .user-avatar {
+        position: relative;
+    }
+
+    .avatar-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* 上传容器样式 */
+    .avatar-upload-container {
+        backdrop-filter: blur(5px);
+    }
+
+    /* 文件输入隐藏 */
+    .file-input {
+        display: none;
+    }
+
+    /* 单按钮样式 */
+    .single-upload-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(76, 175, 80, 0.8);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+
+    .single-upload-button:hover {
+        background: rgba(76, 175, 80, 1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    }
+
+    .single-upload-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+    }
+
+    .button-icon {
+        font-size: 1rem;
+    }
+
+    .button-text {
+        font-size: 1rem;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .user-avatar-container {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .avatar-upload-container {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .single-upload-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* 用户头部区域调整 */
+    .user-center-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-center-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        animation: float 20s linear infinite;
+    }
+
+    .user-greeting {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 300;
+    }
+
+    .user-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    /* 动画效果 */
+    @keyframes float {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    /*******************************************************/
     /* 用户中心特有样式 - 不会与base.css冲突 */
     /* 卡片样式 */
     .poll-card {
